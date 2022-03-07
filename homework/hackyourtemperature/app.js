@@ -13,7 +13,10 @@ app.get("/", (req, res) => {
 
 app.post("/weather", async (req, res) => {
   const cityName = req.body.city;
-  // res.send(cityName);
+  if (!cityName) {
+    res.status(400).json({ message: "city name missing" });
+    return;
+  }
   try {
     const fetchResponse = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&APPID=${keys.API_KEY}`
@@ -21,15 +24,14 @@ app.post("/weather", async (req, res) => {
     if (fetchResponse.ok) {
       const responseJson = await fetchResponse.json();
       const temperature = responseJson.main.temp;
-      console.log(`The temperature in ${cityName} is ${temperature} °C!`);
       res.status(200).json({
         weatherText: `The temperature in ${cityName} is ${temperature} °C!`,
       });
     } else {
-      res.status(400).json({ weatherText: "City is not found!" });
+      res.status(404).json({ message: "City is not found!" });
     }
   } catch (error) {
-    res.status(500).json({ weatherText: `${error.message}` });
+    res.status(500);
     console.log(error.message);
   }
 });
