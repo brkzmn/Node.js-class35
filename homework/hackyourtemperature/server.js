@@ -11,7 +11,6 @@ app.get("/", (req, res) => {
 });
 
 app.post("/weather", (req, res) => {
-  console.log(req.body, "request");
   const cityName = req.body.city;
   res.send(cityName);
 });
